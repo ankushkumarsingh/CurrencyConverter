@@ -22,8 +22,14 @@ struct CurrencyListView: View {
 
   var body: some View {
     VStack{
-      Text("Amount to be converted")
-      TextField("Enter the amount", text: $amount)
+      HStack {
+        Text("Amount: ")
+          .padding()
+        TextField("Enter the amount ", text: $amount)
+          .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+          .cornerRadius(/*@START_MENU_TOKEN@*/3.0/*@END_MENU_TOKEN@*/)
+          .padding()
+      }
       NavigationView {
         Form {
           Section {

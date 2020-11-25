@@ -18,7 +18,6 @@ class CurrencyUpdater {
   init() {
     queueManager = QueueManager.shared
     currencyFetchTimer = Timer.scheduledTimer(timeInterval: 30*60, target: self, selector: #selector(fetchCurrencyListData), userInfo: nil, repeats: true)
-    fetchCurrencyListData()
   }
 
   deinit {
@@ -63,7 +62,7 @@ class CurrencyUpdater {
         let newString = partialResult + "," + currencyListDB.name
         return newString
       }
-      let stringURL = "\(NetworkHelper.shared.baseURL)live?access_key=\(NetworkHelper.shared.accessKey)&currencies=\(currencyStringList)"
+      let stringURL = "\(NetworkHelper.shared.baseURL)live?access_key=\(NetworkHelper.shared.accessKey)&source=\(currentCurrency)&currencies=\(currencyStringList)"
       if currencyFetchOperation != nil {
         currencyFetchOperation?.cancel()
         currencyFetchOperation = nil

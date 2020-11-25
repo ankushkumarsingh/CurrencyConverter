@@ -8,6 +8,8 @@
 import SwiftUI
 import RealmSwift
 
+var currentCurrency = CurrencyLayer.defaultSource
+
 struct CurrencyListView: View {
 
   @EnvironmentObject var store: CurrencyStore
@@ -66,6 +68,8 @@ struct CurrencyListView: View {
 // MARK: - Actions
 extension CurrencyListView {
   func convert() {
+    let selectedCurrency = currencies.isEmpty ? CurrencyLayer.defaultSource: currencies[selectedCurrencyIndex]
+    currentCurrency = selectedCurrency
     print("Convert Pressed")
 
   }

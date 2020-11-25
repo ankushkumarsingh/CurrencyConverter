@@ -40,7 +40,7 @@ struct CurrencyListView: View {
       addConvertButton
       List {
         Section(header: Text("Exchange Rates")) {
-          ForEach(quotes, id: \.self) { quote in
+          ForEach(exchangeRatesToShow, id: \.self) { quote in
             AmountRow(quote: quote)
           }
         }
@@ -70,8 +70,9 @@ extension CurrencyListView {
   func convert() {
     let selectedCurrency = currencies.isEmpty ? CurrencyLayer.defaultSource: currencies[selectedCurrencyIndex]
     currentCurrency = selectedCurrency
-    print("Convert Pressed")
-
+    if let amountInt = Double(self.amount) {
+      exchangeRatesToShow = quotes.map {Quote(name: $0.name, amount: $0.amount * amountInt)}
+    }
   }
 }
 

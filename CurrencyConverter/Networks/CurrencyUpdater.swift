@@ -62,7 +62,10 @@ class CurrencyUpdater {
         let newString = partialResult + "," + currencyListDB.name
         return newString
       }
-      let stringURL = "\(NetworkHelper.shared.baseURL)live?access_key=\(NetworkHelper.shared.accessKey)&source=\(currentCurrency)&currencies=\(currencyStringList)"
+//source is not supported in free tier so commenting it
+
+//      let stringURL = "\(NetworkHelper.shared.baseURL)live?access_key=\(NetworkHelper.shared.accessKey)&source=\(currentCurrency)&currencies=\(currencyStringList)"
+      let stringURL = "\(NetworkHelper.shared.baseURL)live?access_key=\(NetworkHelper.shared.accessKey)&currencies=\(currencyStringList)"
       if currencyFetchOperation != nil {
         currencyFetchOperation?.cancel()
         currencyFetchOperation = nil

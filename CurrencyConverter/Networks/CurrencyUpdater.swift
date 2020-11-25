@@ -17,7 +17,8 @@ class CurrencyUpdater {
 
   init() {
     queueManager = QueueManager.shared
-    currencyFetchTimer = Timer.scheduledTimer(timeInterval: 30*60, target: self, selector: #selector(fetchCurrentCurrencyData), userInfo: nil, repeats: true)
+    currencyFetchTimer = Timer.scheduledTimer(timeInterval: 30*60, target: self, selector: #selector(fetchCurrencyListData), userInfo: nil, repeats: true)
+    fetchCurrencyListData()
   }
 
   deinit {
@@ -39,7 +40,7 @@ class CurrencyUpdater {
     }
   }
 
-  @objc func fetchCurrentCurrencyData() {
+  @objc func fetchCurrentData() {
     //http://api.currencylayer.com/live?access_key=360c26300af78dd73ad9a21fbfe85876
     let stringURL = "\(NetworkHelper.shared.baseURL)live?access_key=\(NetworkHelper.shared.accessKey)"
     if currencyFetchOperation != nil {
@@ -52,6 +53,32 @@ class CurrencyUpdater {
     if let operation = currencyFetchOperation {
       queueManager.enqueueDownload(operation)
     }
+  }
+
+  @objc func fetchCurrencyListData() {
+    do {
+      let realm = try Realm()
+      let currencyListResults = realm.objects(CurrencyListDB.self)
+      let currencyStringList = currencyListResults.reduce("USD") { (partialResult, currencyListDB) -> String in
+        let newString = partialResult + "," + currencyListDB.name
+        return newString
+      }
+      let stringURL = "\(NetworkHelper.shared.baseURL)live?access_key=\(NetworkHelper.shared.accessKey)&currencies=\(currencyStringList)"
+      if currencyFetchOperation != nil {
+        currencyFetchOperation?.cancel()
+        currencyFetchOperation = nil
+      }
+      currencyFetchOperation = CurrencyLayerFetchOperation(stringURL: stringURL)
+      currencyFetchOperation?.name = stringURL
+      currencyFetchOperation?.completionHandler = currencyHandler()
+      if let operation = currencyFetchOperation {
+        queueManager.enqueueDownload(operation)
+      }
+
+    } catch let error {
+      log(error.localizedDescription)
+    }
+
   }
 
   func parseCurrencyLayer(currencyLayer: CurrencyLayer) {

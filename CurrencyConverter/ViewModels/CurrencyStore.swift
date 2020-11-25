@@ -15,7 +15,7 @@ final class CurrencyStore: ObservableObject {
   
   init(realm: Realm) {
     let currencyUpdater = CurrencyUpdater()
-    currencyUpdater.fetchCurrentCurrencyData()
+    currencyUpdater.fetchCurrentData()
     currencyLayerResults = realm.objects(CurrencyLayerDB.self).sorted(byKeyPath: "date")
     currencyListResults = realm.objects(CurrencyListDB.self)
   }

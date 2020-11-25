@@ -12,9 +12,9 @@ struct CurrencyListView: View {
 
   @EnvironmentObject var store: CurrencyStore
   @State private var amount = "0"
-  var currencyOptions = CurrencyOptions.allCases.map {$0.rawValue}
+  var currencyOptions = CurrencyType.allCases.map {$0.rawValue}
   @State private var selectedCurrencyIndex = 0
-  let quotes: [String]
+  let quotes: [Quote]
 
   var body: some View {
     VStack{
@@ -31,12 +31,13 @@ struct CurrencyListView: View {
         }
       }
       Text("Currency Choosen: \(currencyOptions[selectedCurrencyIndex])")
+      Spacer()
+      addConvertButton
       List {
         Section(header: Text("Exchange Rates")) {
           ForEach(quotes, id: \.self) { quote in
             AmountRow(quote: quote)
           }
-          addConvertButton
         }
       }
       .listStyle(GroupedListStyle())
@@ -46,12 +47,14 @@ struct CurrencyListView: View {
   var addConvertButton: some View {
     Button(action: convert) {
       HStack {
-        Image(systemName: "plus.circle.fill")
         Text("Convert")
           .bold()
       }
     }
     .foregroundColor(.green)
+    .padding()
+    .border(Color.green, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+    .cornerRadius(5.0)
   }
 
 }
@@ -61,14 +64,7 @@ struct CurrencyListView: View {
 extension CurrencyListView {
   func convert() {
     print("Convert Pressed")
-//    marvelCharFormIsPresented.toggle()
+
   }
 }
 
-#if DEBUG
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//
-//    }
-//}
-#endif

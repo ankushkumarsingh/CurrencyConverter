@@ -8,26 +8,17 @@
 import SwiftUI
 
 struct AmountRow: View {
+
   @EnvironmentObject var store: CurrencyStore
-  @State private var amount = "0"
-  let quote: String
+
+  let quote: Quote
 
     var body: some View {
-      VStack {
-        TextField("Enter the amount", text: $amount)
-        Text("Quote, \(quote)")
-        Text("Amount, \(amount)!")
+      HStack {
+        Text(quote.name)
+        Spacer()
+        Text("\(quote.amount)")
       }
     }
 }
 
-#if DEBUG
-//struct IngredientRow_Previews: PreviewProvider {
-//  static var previews: some View {
-//    Group {
-//      
-//    }
-//    .previewLayout(.sizeThatFits)
-//  }
-//}
-#endif

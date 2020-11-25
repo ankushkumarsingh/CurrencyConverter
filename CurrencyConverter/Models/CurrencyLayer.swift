@@ -35,6 +35,11 @@ extension CurrencyLayer {
   }
 }
 
+// MARK: Default value
+extension CurrencyLayer {
+  static let defaultSource = CurrencyType.dollorUS
+}
+
 struct Quote: Hashable {
   let name: String
   let amount: Double

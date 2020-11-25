@@ -18,17 +18,17 @@ final class CurrencyStore: ObservableObject {
     currencyLayerResults = realm.objects(CurrencyLayerDB.self).sorted(byKeyPath: "date")
   }
 
-  var currencyLayer: CurrencyLayer? {
-    if let currencyLayerDB = currencyLayerResults.first {
+  func currencyLayer(for currencyType: CurrencyType)-> CurrencyLayer? {
+    if let currencyLayerDB = currencyLayerResults.filter("source = %@",currencyType.rawValue).first {
       return CurrencyLayer(currencyLayerDB: currencyLayerDB)
     }
     return nil
   }
 
-  var quotes: [String] {
-    if let layer = currencyLayer {
-      return layer.quotes.compactMap({ (key: String, value: Double) -> String in
-        return key + "\(value)"
+  func quotes(for currencyType: CurrencyType) -> [Quote] {
+    if let layer = currencyLayer(for: currencyType) {
+      return layer.quotes.compactMap({ (key: String, value: Double) -> Quote in
+        return Quote(name: key, amount: value)
       })
     }
     return []

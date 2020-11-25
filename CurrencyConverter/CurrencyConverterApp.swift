@@ -12,7 +12,7 @@ struct CurrencyConverterApp: View {
 
   var body: some View {
     NavigationView {
-        CurrencyListView(quotes: store.quotes)
+      CurrencyListView(quotes: store.quotes(for: CurrencyLayer.defaultSource))
       }
     }
 }

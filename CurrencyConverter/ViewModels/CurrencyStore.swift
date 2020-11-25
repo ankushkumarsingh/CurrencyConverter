@@ -11,28 +11,35 @@ import RealmSwift
 final class CurrencyStore: ObservableObject {
 
   private var currencyLayerResults: Results<CurrencyLayerDB>
+  private var currencyListResults: Results<CurrencyListDB>
   
   init(realm: Realm) {
     let currencyUpdater = CurrencyUpdater()
     currencyUpdater.fetchCurrentCurrencyData()
     currencyLayerResults = realm.objects(CurrencyLayerDB.self).sorted(byKeyPath: "date")
+    currencyListResults = realm.objects(CurrencyListDB.self)
   }
 
-  func currencyLayer(for currencyType: CurrencyType)-> CurrencyLayer? {
-    if let currencyLayerDB = currencyLayerResults.filter("source = %@",currencyType.rawValue).first {
+  func currencyLayer(for currency: String)-> CurrencyLayer? {
+    if let currencyLayerDB = currencyLayerResults.filter("source = %@",currency).first {
       return CurrencyLayer(currencyLayerDB: currencyLayerDB)
     }
     return nil
   }
 
-  func quotes(for currencyType: CurrencyType) -> [Quote] {
-    if let layer = currencyLayer(for: currencyType) {
+  var currencies: [String] {
+    currencyListResults.map {$0.name}
+  }
+
+  func quotes(for currency: String) -> [Quote] {
+    if let layer = currencyLayer(for: currency) {
       return layer.quotes.compactMap({ (key: String, value: Double) -> Quote in
         return Quote(name: key, amount: value)
       })
     }
     return []
   }
+
 
 }
 

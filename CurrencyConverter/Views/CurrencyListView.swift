@@ -11,10 +11,12 @@ import RealmSwift
 struct CurrencyListView: View {
 
   @EnvironmentObject var store: CurrencyStore
-  @State private var amount = "0"
-  var currencyOptions = CurrencyType.allCases.map {$0.rawValue}
+  @State private var amount = "1"
   @State private var selectedCurrencyIndex = 0
   let quotes: [Quote]
+  let currencies: [String]
+
+  @State private var exchangeRatesToShow: [Quote] = []
 
   var body: some View {
     VStack{
@@ -24,13 +26,14 @@ struct CurrencyListView: View {
         Form {
           Section {
             Picker(selection: $selectedCurrencyIndex, label: Text("Currency")) {
-              ForEach(0 ..< currencyOptions.count) {
-                Text(self.currencyOptions[$0])
+              ForEach(0 ..< currencies.count) {
+                Text(self.currencies[$0])
               }
             }          }
         }
       }
-      Text("Currency Choosen: \(currencyOptions[selectedCurrencyIndex])")
+      let selectedCurrency = currencies.isEmpty ? CurrencyLayer.defaultSource: currencies[selectedCurrencyIndex]
+      Text("Currency Choosen: \(selectedCurrency)")
       Spacer()
       addConvertButton
       List {

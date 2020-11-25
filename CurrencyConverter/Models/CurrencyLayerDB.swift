@@ -24,7 +24,7 @@ class CurrencyLayerDB: Object {
   }
 
   override static func indexedProperties() -> [String] {
-    return ["name"]
+    return ["source"]
   }
 
 }

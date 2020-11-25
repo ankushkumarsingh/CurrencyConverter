@@ -61,20 +61,25 @@ class CurrencyUpdater {
 
 extension CurrencyUpdater {
 
-  private func convert(quotes: [String: Double]) -> List<QuoteDB>{
-    let list = List<QuoteDB>()
+  private func convert(quotes: [String: Double], with source: String) -> (quotes: List<QuoteDB>, currencies: List<String>){
+    let quoteList = List<QuoteDB>()
+    let currencyList = List<String>()
     quotes.forEach { (key: String, value: Double) in
+      let currencyName = key.replacingOccurrences(of: source, with: "")
+      currencyList.append(currencyName)
       let quote = QuoteDB()
-      quote.name = key
+      quote.name = currencyName
       quote.value = value
-      list.append(quote)
+      quoteList.append(quote)
     }
-    return list
+    return (quotes: quoteList, currencies: currencyList)
   }
 
   func create(currencyLayer: CurrencyLayer) {
     do {
       let realm = try Realm()
+
+      let currencyTuple = convert(quotes: currencyLayer.quotes, with: currencyLayer.source)
 
       let currencyLayerDB = CurrencyLayerDB()
       currencyLayerDB.id = UUID().hashValue
@@ -83,10 +88,25 @@ extension CurrencyUpdater {
       currencyLayerDB.privacy = currencyLayer.privacy
       currencyLayerDB.date = Date(timeIntervalSince1970: currencyLayer.timestamp)
       currencyLayerDB.source = currencyLayer.source
-      currencyLayerDB.quotes = convert(quotes: currencyLayer.quotes)
+      currencyLayerDB.quotes = currencyTuple.quotes
 
       try realm.write {
+
         realm.add(currencyLayerDB)
+
+        let currencyListDB = CurrencyListDB()
+        currencyListDB.id = UUID().hashValue
+        currencyListDB.name = CurrencyLayer.defaultSource
+        realm.add(currencyListDB)
+
+        let currencies = currencyTuple.currencies
+        for currency in currencies {
+          let currencyListDB = CurrencyListDB()
+          currencyListDB.id = UUID().hashValue
+          currencyListDB.name = currency
+          realm.add(currencyListDB)
+        }
+
       }
     } catch let error {
       // Handle error
